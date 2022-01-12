@@ -1,0 +1,464 @@
+#:kivy 2.0
+#:import MapView kivy_garden.mapview.MapView
+
+# ScreensManager:
+#     MenuScreen:
+#     NewTripScreen:
+#     MyTripsScreen:
+#     WorldMapScreen:
+#     ItemsListScreen:
+
+############################################################################################################################
+
+<MenuScreen>:
+    name: "menuScreen"
+        
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+        padding: [0, 0.275 * root.height]
+        spacing: "15dp"
+        canvas.before:
+            Color:
+                rgba: rgba('#ffffd2ff')
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+            Color:
+                rgba: rgba('#00ffa5ff')
+            Triangle:
+                points: [0, self.size[1], self.size[0], self.size[1], 0, self.size[1]-(.4*self.size[1])]
+
+            Color:
+                rgba: rgba('#00ffa5b0')
+
+            Triangle:
+                points: [0, self.size[1], self.size[0], self.size[1], self.size[0], self.size[1]-(.4*self.size[1])]
+
+        RoundedButton:
+            text: "Nowa podróż"
+            size_hint: 0.5, 0.15
+            pos_hint: { "center_x": .5 }
+            on_press: 
+                app.root.current = "newTripScreen"
+                root.manager.transition.direction = "right"
+        RoundedButton:
+            text: "Moje podróże"
+            size_hint: 0.5, 0.15
+            pos_hint: { "center_x": .5 }
+            on_press: 
+                app.root.current = "itemsListScreen"
+                root.manager.transition.direction = "left"
+        RoundedButton:
+            text: "Wyjdź"
+            size_hint: 0.5, 0.15
+            pos_hint: { "center_x": .5 }
+            on_press: app.stop()
+
+############################################################################################################################
+
+<RoundedButton@Button>:
+    background_color: (0,0,0,0)
+    background_normal: ''
+    color: (1,1,1,1)
+    bold: True
+    canvas.before:
+        Color: 
+            rgba: rgba('#a0a0a0fa')
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [58]
+
+<MyLabel@Label>:
+    color: (0,0,0,1)
+    font_size: "12dp"
+    size: self.texture_size
+
+<MyCheckBox@CheckBox>:
+    color: rgba('#00ffa5ff')
+
+############################################################################################################################
+
+<NewTripScreen>:
+    name: "newTripScreen"
+
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+        padding: [0, 0.1 * root.height]
+        spacing: "10dp"
+        canvas.before:
+            Color:
+                rgba: rgba('#00ffa5fa')
+            Rectangle:
+                pos: self.pos
+                size: self.size
+            Color:
+                rgba: rgba('#ffffd2ff')
+            RoundedRectangle:
+                pos: self.pos
+                size: self.size
+                radius: [70]
+            Color:
+                rgba: rgba('#ffffd2ff')
+            Rectangle:
+                pos: self.pos
+                size: root.width, root.height/2
+
+        RoundedButton:
+            text: "Mapa świata"
+            size_hint: 0.5, 0.1
+            pos_hint: { "center_x": .5 }
+            on_press: 
+                app.root.current = "worldMapScreen"
+                root.manager.transition.direction = "up"
+
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint: 0.9, 0.1
+            pos_hint: { "center_x": .5 }
+            spacing: "10dp"
+
+            MyLabel:
+                text: "Współrzędne celu"
+                multiline: False
+                font_size: "15dp"
+
+            TextInput:
+                id: cityX
+                size_hint: 0.45, 1
+                hint_text: "Szerokość"
+                multiline: False
+
+            TextInput:
+                id: cityY
+                size_hint: 0.45, 1
+                hint_text: "Długość"
+                multiline: False
+
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint: 0.9, 0.1
+            pos_hint: { "center_x": .5 }
+            spacing: "0dp"
+
+            MyLabel:
+                text: "Data"
+                multiline: False
+                font_size: "15dp"
+
+            # MyLabel:
+            #     text: ""
+            #     multiline: False
+            #     font_size: "12dp"
+
+            TextInput:
+                id: dataRangeLabel
+                hint_text: "Od"
+                multiline: False
+                size_hine: 0.05, None
+
+            TextInput:
+                id: dataRangeLabelEnd
+                hint_text: "Do"
+                multiline: False
+                size_hine: 0.05, None
+
+            # MyLabel:
+            #     id: dataRangeLabel
+            #     text: ""
+            #     multiline: False
+
+            Button:
+                text: ""
+                # size_hint: 1, 1.4
+                # pos_hint: { "center_y": .5 }
+
+                size_hint: None, 1.4
+                pos_hint:  { "center_y": .5 }
+                # auto_width: False
+                # width: 150
+                on_press: root.on_date_button_press()
+                font_size: "11dp"
+                bold: True
+                background_normal: 'calendar.png'
+                background_down: 'calendar.png'
+
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint: 0.9, 0.1
+            pos_hint: { "center_x": .5 }
+            spacing: "10dp"
+
+            MyLabel:
+                text: "Typ noclegu"
+                multiline: False
+                font_size: "15dp"
+
+            # MyLabel:
+            #     text: " "
+            #     multiline: False
+            #     size_hint: 0.45, 1
+
+            Spinner:
+                id: accomodation_type
+                text: ""
+                size_hint: None, 0.7
+                pos_hint:  { "center_y": .5 }
+                values: ["Hotel", "Biwak", "Inne"]
+
+                background_normal: ""
+                # background_color: rgba('#a0a0a0fa')
+                background_color: rgba('#00ffa5ff')
+
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint: 1, 0.3
+            pos_hint: { "center_x": .5 }
+            spacing: "10dp"
+            padding: [0,0,0,0]
+            BoxLayout:
+                orientation: "vertical"
+                MyLabel:
+                    text: "Atrakcje"
+                    multiline: False
+                    font_size: "15dp"
+
+
+            BoxLayout:
+                orientation: "vertical"
+
+                BoxLayout:
+                    orientation: "horizontal"
+
+                    MyLabel:
+                        id: lbl0
+                        text: "Zwiedzanie"
+                        multiline: False
+
+                    MyCheckBox:
+                        id: chck0
+
+                BoxLayout:
+                    orientation: "horizontal"
+
+                    MyLabel:
+                        id: lbl1
+                        text: "Atrakcje wodne"
+                        multiline: False
+
+                    MyCheckBox:
+                        id: chck1
+
+                BoxLayout:
+                    orientation: "horizontal"
+
+                    MyLabel:
+                        id: lbl2
+                        text: "Narty"
+                        multiline: False
+
+                    MyCheckBox:
+                        id: chck2
+
+                BoxLayout:
+                    orientation: "horizontal"
+
+                    MyLabel:
+                        id: lbl3
+                        text: "Snowboard"
+                        multiline: False
+
+                    MyCheckBox:
+                        id: chck3
+
+                BoxLayout:
+                    orientation: "horizontal"
+
+                    MyLabel:
+                        id: lbl4
+                        text: "Wycieczki górskie"
+                        multiline: False
+
+                    MyCheckBox:
+                        id: chck4
+
+                BoxLayout:
+                    orientation: "horizontal"
+
+                    MyLabel:
+                        id: lbl5
+                        text: "Wycieczki rowerowe"
+                        multiline: False
+
+                    MyCheckBox:
+                        id: chck5
+
+        RoundedButton:
+            text: "Przygotuj liste"
+            size_hint: 0.5, 0.1
+            pos_hint: { "center_x": .5 }
+            on_press: 
+                root.on_button_prepare_list_press(self)
+                app.root.current = "itemsListScreen"
+                root.manager.transition.direction = "right"
+
+        RoundedButton:
+            text: "Cofnij"
+            size_hint: 0.5, 0.1
+            pos_hint: { "center_x": .5 }
+            on_press: 
+                app.root.current = "menuScreen"
+                root.manager.transition.direction = "left"
+
+############################################################################################################################
+
+<MyTripsScreen>:
+    name: "myTripsScreen"
+
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+        padding: [0, 0.275 * root.height]
+        spacing: "10dp"
+
+        MyLabel:
+            text: "Moje podróże:"
+            size_hint: 0.5, 0.15
+            pos_hint: { "center_x": .5 }
+       
+        RoundedButton:
+            text: "Cofnij"
+            size_hint: 0.5, 0.15
+            pos_hint: { "center_x": .5 }
+            on_press: 
+                app.root.current = "menuScreen"
+                root.manager.transition.direction = "right"
+
+############################################################################################################################
+
+<Toolbar@BoxLayout>:
+    size_hint_y: None
+    height: '48dp'
+    padding: '4dp'
+    spacing: '4dp'
+    canvas:
+        Color:
+            rgba: .2, .2, .2, .6
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+############################################################################################################################
+
+<WorldMapScreen>:
+    name: "worldMapScreen"
+
+    RelativeLayout:
+
+        MapView:
+            id: mapview
+            lat: 52.22
+            lon: 21.01
+            zoom: 10
+
+        Toolbar:
+            top: root.top
+
+            Button:
+                text: "Potwierdź miejsce"
+                on_release: 
+                    app.root.get_screen("newTripScreen").ids.cityX.text = str(round(mapview.lon, 4))
+                    app.root.get_screen("newTripScreen").ids.cityY.text = str(round(mapview.lat, 4))
+                    app.root.current = "newTripScreen"
+                    root.manager.transition.direction = "down"
+
+            BoxLayout:
+                orientation: "horizontal"
+
+                TextInput:
+                    id: place_name
+                    hint_text: "Warsaw"
+                    multiline: False
+
+                Button:
+                    text: "Move to place"
+                    on_release: root.on_release_button(self)
+
+        Toolbar:
+            TextInput:
+                id: place_lon
+                hint_text: "Longitude: {:.4f}".format(mapview.lon)
+                multiline: False
+                # on_text_validate: root.on_text_val(self, self.text)
+
+            TextInput:
+                id: place_lat
+                hint_text: "Latitude: {:.4f}".format(mapview.lat)
+                multiline: False
+                # on_text_validate: root.on_text_val(self, self.text)
+
+############################################################################################################################
+
+<Content>:
+    orientation: "vertical"
+    padding: "10dp"
+    spacing: "2dp"
+    adaptive_height: True
+    size_hint_y: None
+    height: "150dp"
+
+    # TwoLineIconListItem:
+    #     text: "(050)-123-45-67"
+    #     secondary_text: ""
+
+    #     IconLeftWidget:
+    #         icon: "phone"
+
+    # TwoLineIconListItem:
+    #     text: "kivydevelopment@gmail.com"
+    #     secondary_text: ""
+
+    #     IconLeftWidget:
+    #         icon: "email"
+
+<ItemsListScreen>:
+    name: "itemsListScreen"
+
+    ScrollView:
+        canvas.before:
+            Color:
+                rgba: rgba('#00ffa5fa')
+            Rectangle:
+                pos: self.pos
+                size: self.size
+            Color:
+                rgba: rgba('#b0b0b0ff')
+            RoundedRectangle:
+                pos: self.pos
+                size: self.size
+                radius: [70]
+            Color:
+                rgba: rgba('#b0b0b0ff')
+            Rectangle:
+                pos: self.pos
+                size: root.width, root.height/2
+            Rectangle:
+                pos: self.pos
+                size: root.width/2, root.height
+        MDList:
+            id: itemsList
+    RoundedButton:
+        id: "ok"
+        text: "OK"
+        size_hint: 0.1, 0.09
+        pos_hint: { "center_x": .9 }
+        on_press: 
+            root.on_button_press()
+            app.root.current = "menuScreen"
+            root.manager.transition.direction = "left"
+
+
+    
